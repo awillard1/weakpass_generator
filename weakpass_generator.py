@@ -26,16 +26,45 @@ monthDictionary["December"] = ["December", "Winter"]
 OUTPUT_LIST = []
 
 p = re.compile('[^a-zA-Z0-9]')
+
+def checkIfDuplicate(listOfElems,item):
+    for elem in listOfElems:
+        if elem==item:
+            return True
+    return False
+
 def create_passwords(tempdate):
     year_short=tempdate.strftime("%y")
     year_long=tempdate.strftime("%Y")
     current_month=tempdate.strftime("%B")
+    
     for cntry in hcnty:
         hdays = holidays.CountryHoliday(cntry)
         tempholiday = hdays.get(tempdate.strftime("%Y-%m-%d"))
+        subholiday = ""
+        preholiday = ""
         if tempholiday:
+            i = 0
+            e = 0
+            tempholiday = tempholiday.replace('(Observed)','')
+            if tempholiday.find('(')>0:
+                i=tempholiday.index('(')
+                e=tempholiday.index(')')
+            elif tempholiday.find('[')>0:
+                i = tempholiday.index('[')
+                e = tempholiday.index(']')
+            if i>0:
+                subholiday = tempholiday[i+1:e]
+                preholiday = tempholiday[0:i]
+            
+            if len(subholiday)>0:
+                shold = p.sub('',subholiday)
+                if False == checkIfDuplicate(monthDictionary[current_month], shold):
+                    monthDictionary[current_month].append(shold)
+                    
             h = p.sub('',tempholiday)
-            monthDictionary[current_month].append(h)
+            if False == checkIfDuplicate(monthDictionary[current_month],h):
+                monthDictionary[current_month].append(h)
             if h.endswith('Day'):
                 h = h.replace('Day','')
                 monthDictionary[current_month].append(h)
