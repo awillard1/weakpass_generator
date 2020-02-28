@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # 2020.02.18 - @nyxgeek - TrustedSec
 # 2020.02.28 - @awillard1 - aswsec
-# TODO: REFACTOR
+# TODO: REFACTOR again
 # generate weak passwords based on current date
 import holidays, string
 import re
@@ -34,11 +34,19 @@ def checkIfDuplicate(listOfElems,item):
             return True
     return False
 
-def create_passwords(tempdate):
+def createSuffixArray(tempdate):
     year_short=tempdate.strftime("%y")
     year_long=tempdate.strftime("%Y")
-    current_month=tempdate.strftime("%B")
+    suffix_array = [year_short, year_long, "1", "123"]
+    for c in string.punctuation:
+        suffix_array.append(c+year_short)
+        suffix_array.append(c+year_long)
+        suffix_array.append(year_short+c)
+        suffix_array.append(year_long+c)
+    return suffix_array    
     
+def createMonthDictionary(tempdate):
+    current_month=tempdate.strftime("%B")
     for cntry in hcnty:
         hdays = holidays.CountryHoliday(cntry)
         tempholiday = hdays.get(tempdate.strftime("%Y-%m-%d"))
@@ -47,22 +55,23 @@ def create_passwords(tempdate):
         if tempholiday:
             i = 0
             e = 0
+            #Remove the word observed
             tempholiday = tempholiday.replace('(Observed)','')
-            if tempholiday.find('(')>0:
+            if tempholiday.find('(') > 0:
                 i=tempholiday.index('(')
                 e=tempholiday.index(')')
-            elif tempholiday.find('[')>0:
+            elif tempholiday.find('[') > 0:
                 i = tempholiday.index('[')
                 e = tempholiday.index(']')
-            if i>0:
+            if i > 0:
                 subholiday = tempholiday[i+1:e].strip()
                 preholiday = tempholiday[0:i].strip()
             
-            if len(subholiday)>0:
+            if len(subholiday) > 0:
                 shold = p.sub('',subholiday)
                 if False == checkIfDuplicate(monthDictionary[current_month], shold):
                     monthDictionary[current_month].append(shold)
-            if len(preholiday)>0:
+            if len(preholiday) > 0:
                 phold = p.sub('',preholiday)
                 if False == checkIfDuplicate(monthDictionary[current_month], phold):
                     monthDictionary[current_month].append(phold)
@@ -76,13 +85,10 @@ def create_passwords(tempdate):
                 if False == checkIfDuplicate(monthDictionary[current_month],h):
                     monthDictionary[current_month].append(h)
 
-    SUFFIX_ARRAY = [ year_short, year_long, "1", "123"]
-    for c in string.punctuation:
-        SUFFIX_ARRAY.append(c+year_short)
-        SUFFIX_ARRAY.append(c+year_long)
-        SUFFIX_ARRAY.append(year_short+c)
-        SUFFIX_ARRAY.append(year_long+c)
-
+def create_passwords(tempdate):
+    current_month=tempdate.strftime("%B")
+    createMonthDictionary(tempdate)
+    SUFFIX_ARRAY = createSuffixArray(tempdate)
     for month_prefix in monthDictionary[current_month]:
         for password_suffix in SUFFIX_ARRAY:
             #print("%s%s" % (month_prefix, password_suffix) )
