@@ -3,7 +3,7 @@
 # 2020.02.28 - @awillard1 - aswsec
 # TODO: REFACTOR
 # generate weak passwords based on current date
-import holidays
+import holidays, string
 import re
 import datetime
 from datetime import datetime, timedelta
@@ -76,7 +76,12 @@ def create_passwords(tempdate):
                 if False == checkIfDuplicate(monthDictionary[current_month],h):
                     monthDictionary[current_month].append(h)
 
-    SUFFIX_ARRAY = [ year_short ,  year_long, "@"+year_short, "@"+year_long, year_short+"!", year_long+"!", "1", "123"]
+    SUFFIX_ARRAY = [ year_short, year_long, "1", "123"]
+    for c in string.punctuation:
+        SUFFIX_ARRAY.append(c+year_short)
+        SUFFIX_ARRAY.append(c+year_long)
+        SUFFIX_ARRAY.append(year_short+c)
+        SUFFIX_ARRAY.append(year_long+c)
 
     for month_prefix in monthDictionary[current_month]:
         for password_suffix in SUFFIX_ARRAY:
