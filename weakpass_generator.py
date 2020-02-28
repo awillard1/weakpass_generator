@@ -54,20 +54,24 @@ def create_passwords(tempdate):
                 i = tempholiday.index('[')
                 e = tempholiday.index(']')
             if i>0:
-                subholiday = tempholiday[i+1:e]
-                preholiday = tempholiday[0:i]
+                subholiday = tempholiday[i+1:e].strip()
+                preholiday = tempholiday[0:i].strip()
             
             if len(subholiday)>0:
                 shold = p.sub('',subholiday)
                 if False == checkIfDuplicate(monthDictionary[current_month], shold):
                     monthDictionary[current_month].append(shold)
+            if len(preholiday)>0:
+                phold = p.sub('',preholiday)
+                if False == checkIfDuplicate(monthDictionary[current_month], phold):
+                    monthDictionary[current_month].append(phold)
                     
             h = p.sub('',tempholiday)
             if False == checkIfDuplicate(monthDictionary[current_month],h):
                 monthDictionary[current_month].append(h)
             
             if h.endswith('Day'):
-                h = h.replace('Day','')
+                h = h.replace('Day','').strip()
                 if False == checkIfDuplicate(monthDictionary[current_month],h):
                     monthDictionary[current_month].append(h)
 
