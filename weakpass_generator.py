@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # 2020.02.18 - @nyxgeek - TrustedSec
-
+# 2020.02.28 - @awillard1 - aswsec
 # generate weak passwords based on current date
 import holidays
 import re
