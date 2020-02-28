@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # 2020.02.18 - @nyxgeek - TrustedSec
-
+# 2020.02.28 - @awillard1 - aswsec
+# mod - changed to use holidays - lots of work to do still
 # generate weak passwords based on current date
-
+import holidays
+import re
 import datetime
 from datetime import datetime, timedelta
 
+hcnty= ['AR','AW','AU','AT','BY','BE','BR','BG','CA','CL','CO','HR','CZ','DK','DO','EG','EE','ECB','FI','FRA','DE','GR','HND','HK','HU','IS','IND','IE','IL','IT','JP','KE','LT','LU','MX','NL','NZ','NI','NG','NO','PY','PE','PL','PT','PTE','RU','RS','SG','SK','SI','ZA','ES','SE','CH','UA','UK','US']
 #Define our Months and Keywords for Prefixes
 monthDictionary = {}
 monthDictionary["January"] = ["January", "Winter"]
@@ -18,16 +21,22 @@ monthDictionary["July"] = ["July", "Summer"]
 monthDictionary["August"] = ["August", "Summer", "Fall", "Autumn"]
 monthDictionary["September"] = ["September", "Fall", "Autumn"]
 monthDictionary["October"] = ["October", "Fall", "Autumn", "Winter"]
-monthDictionary["November"] = ["November", "Fall", "Autumn", "Winter", "Thanksgiving"]
-monthDictionary["December"] = ["December", "Winter", "Christmas"]
+monthDictionary["November"] = ["November", "Fall", "Autumn", "Winter"]
+monthDictionary["December"] = ["December", "Winter"]
 
 OUTPUT_LIST = []
 
-
+p = re.compile('[^a-zA-Z0-9]')
 def create_passwords(tempdate):
     year_short=tempdate.strftime("%y")
     year_long=tempdate.strftime("%Y")
     current_month=tempdate.strftime("%B")
+    for cntry in hcnty:
+        hdays = holidays.CountryHoliday(cntry)
+        tempholiday = hdays.get(tempdate.strftime("%Y-%m-%d"))
+        if tempholiday:
+            h = p.sub('',tempholiday)
+            monthDictionary[current_month].append(h)    
 
     SUFFIX_ARRAY = [ year_short ,  year_long, "@"+year_short, "@"+year_long, year_short+"!", year_long+"!", "1", "123"]
 
@@ -38,7 +47,7 @@ def create_passwords(tempdate):
             OUTPUT_LIST.append("%s%s" % (month_prefix, password_suffix))
 
 
-for numberofdays in range(1,90):
+for numberofdays in range(1,180):
     tempdate = datetime.now() - timedelta(days=numberofdays)
     create_passwords(tempdate)
 
