@@ -38,6 +38,8 @@ def createSuffixArray(tempdate):
     year_short=tempdate.strftime("%y")
     year_long=tempdate.strftime("%Y")
     suffix_array = [year_short, year_long, "1", "123"]
+    #Use this to simplify using special characters
+    #loop through them and add to the array
     for c in string.punctuation:
         suffix_array.append(c+year_short)
         suffix_array.append(c+year_long)
