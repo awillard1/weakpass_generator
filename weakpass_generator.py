@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # 2020.02.18 - @nyxgeek - TrustedSec
-# 2020.02.28 - @awillard1 - aswsec
-# mod - changed to use holidays - lots of work to do still
+
 # generate weak passwords based on current date
 import holidays
 import re
@@ -36,7 +35,10 @@ def create_passwords(tempdate):
         tempholiday = hdays.get(tempdate.strftime("%Y-%m-%d"))
         if tempholiday:
             h = p.sub('',tempholiday)
-            monthDictionary[current_month].append(h)    
+            monthDictionary[current_month].append(h)
+            if h.endswith('Day'):
+                h = h.replace('Day','')
+                monthDictionary[current_month].append(h)
 
     SUFFIX_ARRAY = [ year_short ,  year_long, "@"+year_short, "@"+year_long, year_short+"!", year_long+"!", "1", "123"]
 
