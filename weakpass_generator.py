@@ -65,9 +65,11 @@ def create_passwords(tempdate):
             h = p.sub('',tempholiday)
             if False == checkIfDuplicate(monthDictionary[current_month],h):
                 monthDictionary[current_month].append(h)
+            
             if h.endswith('Day'):
                 h = h.replace('Day','')
-                monthDictionary[current_month].append(h)
+                if False == checkIfDuplicate(monthDictionary[current_month],h):
+                    monthDictionary[current_month].append(h)
 
     SUFFIX_ARRAY = [ year_short ,  year_long, "@"+year_short, "@"+year_long, year_short+"!", year_long+"!", "1", "123"]
 
